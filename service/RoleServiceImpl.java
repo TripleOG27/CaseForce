@@ -1,5 +1,6 @@
 package com.detelin.caseforce.service;
 
+import com.detelin.caseforce.GlobalConstants;
 import com.detelin.caseforce.domain.entities.Role;
 import com.detelin.caseforce.domain.models.service.RoleServiceModel;
 import com.detelin.caseforce.repository.RoleRepository;
@@ -23,22 +24,16 @@ public class RoleServiceImpl implements RoleService {
     @Override
     public void seedRolesInDB() {
         if(this.roleRepository.count()==0){
-            this.roleRepository.saveAndFlush(new Role("ROLE_USER"));
-            this.roleRepository.saveAndFlush(new Role("ROLE_MODERATOR"));
-            this.roleRepository.saveAndFlush(new Role("ROLE_ADMIN"));
-            this.roleRepository.saveAndFlush(new Role("ROLE_ROOT"));
+            this.roleRepository.saveAndFlush(new Role(GlobalConstants.CLIENT_ROLE ));
+            this.roleRepository.saveAndFlush(new Role(GlobalConstants.TSE_ROLE));
+            this.roleRepository.saveAndFlush(new Role(GlobalConstants.TSM_ROLE));
+            this.roleRepository.saveAndFlush(new Role(GlobalConstants.ACCOUNT_MANAGER_ROLE));
+            this.roleRepository.saveAndFlush(new Role(GlobalConstants.PRIVILEGES_ROLE));
+            this.roleRepository.saveAndFlush(new Role(GlobalConstants.DEVELOPER_ROLE));
+            this.roleRepository.saveAndFlush(new Role(GlobalConstants.ROOT_ROLE));
         }
     }
 
-//    @Override
-//    public void assignUserRoles(UserServiceModel userServiceModel,long numberOfUsers) {
-//        if(numberOfUsers==0){
-//            userServiceModel.setAuthorities(this.roleRepository.findAll()
-//                    .stream()
-//                    .map(r->this.mapper.map(r, RoleServiceModel.class))
-//            .collect(Collectors.toSet()));
-//        }
-//    }
 
     @Override
     public Set<RoleServiceModel> findAllRoles() {
