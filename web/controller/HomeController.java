@@ -1,5 +1,6 @@
 package com.detelin.caseforce.web.controller;
 
+import com.detelin.caseforce.web.annotations.PageTitle;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,17 +12,17 @@ import java.util.stream.Collectors;
 public class HomeController extends BaseController {
     @GetMapping("/")
     @PreAuthorize("isAnonymous()")
-//    @PageTitle("Index")
+    @PageTitle("Index")
     public ModelAndView index() {
         return super.view("index");
     }
 
     @GetMapping("/home")
     @PreAuthorize("isAuthenticated()")
-//    @PageTitle("Home")
-    public ModelAndView home() {
+    @PageTitle("Home")
+    public ModelAndView home(ModelAndView modelAndView) {
 
 
-        return super.view("home");
+        return super.view("home",modelAndView);
     }
 }
