@@ -34,13 +34,13 @@
                                         <th:block th:each="user, iter : ${users}">
                                         <tr>
                                             <td>
-                                                <img src="https://bootdey.com/img/Content/user_1.jpg" alt="">
+                                                <img th:src="${user.imageUrl}" alt="profile-image" width="75" height="75">
                                                 <a href="#" class="user-link" th:text="${user.username}"></a>
                                                 <span class="user-subhead" th:text="${user.highestAuthority}"></span>
                                             </td>
                                             <td th:text="${user.created}"></td>
                                             <td class="text-center">
-                                                <span class="label label-default" th:text="${user.status}"></span>
+                                                <span class="label label-default"><a th:href="@{/users/status/{id}(id=${user.id})}" th:text="${user.status}"/></span>
                                             </td>
                                             <td>
                                                 <a href="#" th:text="${user.email}"></a>
