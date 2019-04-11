@@ -13,11 +13,11 @@
     <hr class="hr-2 bg-dark w-25">
     <form class="form w-25 mx-auto" th:action="@{/users/edit}" th:method="post" enctype="multipart/form-data"><input type="hidden" name="_csrf" value="80417983-fe8b-45c7-963e-31f6915a1560">
         <div class="text-center">
-            <img th:src="${user.imageUrl}" alt="profileImg">
+            <img th:src="${user.imageUrl}" alt="profileImg" width="200" height="200">
         </div>
         <div class="form-group">
-            <label for="add-product-image" class="font-weight-bold">Image</label>
-            <input type="file" class="form-control-file" id="add-product-image" name="image">
+            <label for="add-profile-image" class="font-weight-bold">Image</label>
+            <input type="file" class="form-control-file" id="add-profile-image" name="imageUrl">
         </div>
         <div class="form-group">
             <label for="username" class="font-weight-bold">Username</label>
@@ -37,10 +37,11 @@
         </div>
         <div class="form-group">
             <label for="email" class="font-weight-bold">Email</label>
-            <input type="email" th:value="${model.email}" class="form-control" id="email" placeholder="Email..." name="email">
+            <input type="email" th:value="${user.email}" class="form-control" id="email" placeholder="Email..." name="email">
         </div>
         <hr class="hr-2 bg-dark">
         <div class="button-holder d-flex justify-content-center">
+            <a th:href="@{/home}">Back</a>   
             <button type="submit" class="btn btn-dark">Edit</button>
         </div>
     </form>

@@ -1,4 +1,4 @@
-<th:block>
+<th:block xmlns:th="http://www.w3.org/1999/xhtml">
     <th:block sec:authorize="isAnonymous()">
         <nav class="navbar navbar-expand-lg navbar-light bg-light rounded font-weight-bold">
             <a class="navbar-brand" th:href="@{/}" style="color: #5e9ca0;"><em>Case Force</em></a>
@@ -48,42 +48,34 @@
                         <a class="nav-link" th:href="@{/top-offers}">Top Offers</a>
                     </li>
                     <li class="nav-item active">
-                        <a class="nav-link" th:href="@{/orders/my}">My Orders</a>
+                        <a class="nav-link" th:href="@{/orders/my}">My Open Cases</a>
                     </li>
                     <li class="nav-item active">
-                        <a class="nav-link" th:href="@{/users/profile}">Profile</a>
+                        <a class="nav-link" th:href="@{/users/edit}">Profile</a>
                     </li>
                     <!--developer role to be able to add new products-->
-                    <th:block sec:authorize="hasRole('ROLE_DEVELOPER')">
+                    <th:block sec:authorize="hasAnyRole('ROLE_ROOT','ROLE_TSM','ROLE_TSE','ROLE_CLIENT')">
                         <li class="nav-item active">
                             <div class="dropdown show">
                                 <a class="nav-link active dropdown-toggle" href="#" role="button" id="moderatorDropdown"
                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    Products
+                                    Cases
                                 </a>
                                 <div class="dropdown-menu" aria-labelledby="moderatorDropdown">
-                                    <a class="dropdown-item" th:href="@{/products/all}">All Products</a>
+                                    <a class="dropdown-item" th:href="@{/case/all-active}">Active Cases</a>
+                                    <a class="dropdown-item" th:href="@{/case/all-closed}">Closed Cases</a>
                                     <div class="dropdown-divider"></div>
-                                    <a class="dropdown-item" th:href="@{/products/add}">Add Product</a>
-                                    <a class="dropdown-item" th:href="@{/categories/all}">Add Categories</a>
+                                    <a class="dropdown-item" th:href="@{/case/open}">Open Case</a>
                                 </div>
                             </div>
                         </li>
                     </th:block>
                     <a class="dropdown-item" th:href="@{/categories/add}">Add License</a>
-                    <th:block sec:authorize="hasRole('ROLE_ADMIN')">
+                    <th:block sec:authorize="hasAnyRole('ROLE_ROOT','ROLE_TSM')">
                         <li class="nav-item active">
-                            <div class="dropdown">
-                                <a class="nav-link active dropdown-toggle" href="#" role="button" id="adminDropdown"
-                                   data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    Admin
-                                </a>
-                                <div class="dropdown-menu" aria-labelledby="adminDropdown">
-                                    <a class="dropdown-item" th:href="@{/users/all}">All Users</a>
-                                    <a class="dropdown-item" th:href="@{/orders/all}">All Orders</a>
-                                </div>
-                            </div>
+                            <a class="nav-link" th:href="@{/users/all}">All Users</a>
                         </li>
+
                     </th:block>
                     <li class="nav-item active">
                         <form action="/logout?login" method="post">
