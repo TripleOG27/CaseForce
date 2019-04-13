@@ -1,9 +1,14 @@
 package com.detelin.caseforce.web.controller;
 
+import com.cloudinary.Cloudinary;
+import com.detelin.caseforce.domain.entities.enums.UserStatus;
+import com.detelin.caseforce.domain.models.binding.UserEditBindingModel;
 import com.detelin.caseforce.domain.models.binding.UserRegisterBindingModel;
 import com.detelin.caseforce.domain.models.service.RoleServiceModel;
 import com.detelin.caseforce.domain.models.service.UserServiceModel;
 import com.detelin.caseforce.domain.models.view.UserAllViewModel;
+import com.detelin.caseforce.domain.models.view.UserProfileViewModel;
+import com.detelin.caseforce.service.CloudService;
 import com.detelin.caseforce.service.RoleService;
 import com.detelin.caseforce.service.UserService;
 import com.detelin.caseforce.web.annotations.PageTitle;
@@ -14,7 +19,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
-import java.util.LinkedList;
+import java.io.IOException;
+import java.security.Principal;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -24,12 +30,14 @@ public class UserController extends BaseController {
     private final UserService userService;
     private final ModelMapper modelMapper;
     private final RoleService roleService;
+    private final CloudService cloudService;
 
     @Autowired
-    public UserController(UserService userService, ModelMapper modelMapper, RoleService roleService) {
+    public UserController(UserService userService, ModelMapper modelMapper, RoleService roleService, CloudService cloud) {
         this.userService = userService;
         this.modelMapper = modelMapper;
         this.roleService = roleService;
+        this.cloudService = cloud;
     }
 
     @GetMapping("/register")
@@ -58,38 +66,29 @@ public class UserController extends BaseController {
         return super.view("login");
     }
 
-//    @GetMapping("/profile")
-//    @PreAuthorize("isAuthenticated()")
-////    @PageTitle("Profile")
-//    public ModelAndView profile(Principal principal, ModelAndView modelAndView) {
-//        modelAndView
-//                .addObject("model", this.modelMapper.map(this.userService.findUserByUserName(principal.getName()), UserProfileViewModel.class));
-//
-//        return super.view("profile", modelAndView);
-//    }
-//
-//    @GetMapping("/edit")
-//    @PreAuthorize("isAuthenticated()")
-//    @PageTitle("Edit Profile")
-//    public ModelAndView editProfile(Principal principal, ModelAndView modelAndView) {
-//        modelAndView
-//                .addObject("model", this.modelMapper.map(this.userService.findUserByUserName(principal.getName()), UserProfileViewModel.class));
-//
-//        return super.view("edit-profile", modelAndView);
-//    }
-//
-//    @PatchMapping("/edit")
-//    @PreAuthorize("isAuthenticated()")
-//    public ModelAndView editProfileConfirm(@ModelAttribute UserEditBindingModel model) {
-//        if (!model.getPassword().equals(model.getConfirmPassword())) {
-//            return super.view("edit-profile");
-//        }
-//
-//        this.userService.editUserProfile(this.modelMapper.map(model, UserServiceModel.class), model.getOldPassword());
-//
-//        return super.redirect("/users/profile");
-//    }
-//
+    @GetMapping("/edit")
+    @PreAuthorize("isAuthenticated()")
+    @PageTitle("Edit Profile")
+    public ModelAndView editProfile(Principal principal, ModelAndView modelAndView) {
+        modelAndView
+                .addObject("user", this.modelMapper.map(this.userService.findUserByUsername(principal.getName()), UserProfileViewModel.class));
+
+        return super.view("user/edit-profile", modelAndView);
+    }
+
+    @PostMapping("/edit")
+    @PreAuthorize("isAuthenticated()")
+    public ModelAndView editProfileConfirm(@ModelAttribute UserEditBindingModel user) throws IOException {
+        if (!user.getPassword().equals(user.getConfirmPassword())) {
+            return super.view("user/edit-profile");
+        }
+        UserServiceModel userServiceModel = this.modelMapper.map(user,UserServiceModel.class);
+        userServiceModel.setImageUrl(this.cloudService.uploadImage(user.getImageUrl()));
+        this.userService.editUserProfile(userServiceModel, user.getOldPassword());
+
+        return super.redirect("/home");
+    }
+
     @GetMapping("/all")
     @PreAuthorize("hasAnyRole('ROLE_TSM','ROLE_PRIVILEGES')")
     @PageTitle("All Users")
@@ -108,35 +107,36 @@ public class UserController extends BaseController {
 
         return super.view("user/all-users", modelAndView);
     }
-    @GetMapping("/edit/{id}")
+    @GetMapping("/privilege/{id}")
     @PreAuthorize("hasAnyRole('ROLE_PRIVILEGES')")
     public ModelAndView setUserRole(@PathVariable String id,ModelAndView modelAndView) {
        modelAndView.addObject("user",this.modelMapper.map(this.userService.findUserById(id),UserAllViewModel.class));
+       modelAndView.addObject("roles",this.roleService.findAllRoles().stream().map(r->r.getAuthority().substring(5)).collect(Collectors.toList()));
         return super.view("/user/edit-roles",modelAndView);
     }
-    @PostMapping("/edit/{id}")
+    @PostMapping("/privilege/{id}")
     @PreAuthorize("hasAnyRole('ROLE_PRIVILEGES')")
-    public ModelAndView setUser(@PathVariable String id) {
-        this.userService.setUserRole(id, "user");
+    public ModelAndView setUserRole(@PathVariable String id,@RequestParam(name = "authorities",required = false)String role ) {
+
+        this.userService.setUserRole(id, role);
+
+        return super.redirect("/users/all");
+    }
+    @GetMapping("/status/{id}")
+    @PreAuthorize("hasAnyRole('ROLE_TSM')")
+    public ModelAndView setUserStatus(@PathVariable String id,ModelAndView modelAndView) {
+        modelAndView.addObject("user",this.modelMapper.map(this.userService.findUserById(id),UserAllViewModel.class));
+        modelAndView.addObject("status", UserStatus.values());
+        return super.view("/user/edit-status",modelAndView);
+    }
+    @PostMapping("/status/{id}")
+    @PreAuthorize("hasAnyRole('ROLE_TSM')")
+    public ModelAndView setUserStatus(@PathVariable String id,@RequestParam(name = "status",required = false)String status ) {
+        int b=5;
+        this.userService.setStatus(id, status);
 
         return super.redirect("/users/all");
     }
 
-    @GetMapping("/roles")
-    @PreAuthorize("hasRole('ROLE_PRIVILEGES')")
-    @ResponseBody
-    public List<String> findAllRoles() {
-        List<String>authorities=new LinkedList<>();
-        this.roleService.findAllRoles().forEach(r->((LinkedList<String>) authorities).push(r.getAuthority()));
 
-        return authorities;
-    }
-
-//    @PostMapping("/set-admin/{id}")
-//    @PreAuthorize("hasRole('ROLE_ADMIN')")
-//    public ModelAndView setAdmin(@PathVariable String id) {
-//        this.userService.setUserRole(id, "admin");
-//
-//        return super.redirect("/users/all");
-//    }
 }

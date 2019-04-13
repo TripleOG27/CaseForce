@@ -12,7 +12,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.Date;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -73,7 +72,44 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void setUserRole(String id, String user) {
+    public void setUserRole(String id, String role) {
+        UserServiceModel userServiceModel = this.mapper.map(
+                this.userRepository.findById(id).orElseThrow(()->new UsernameNotFoundException("User not found"))
+                ,UserServiceModel.class);
+        userServiceModel.getAuthorities().clear();
+        userServiceModel.getAuthorities().add(this.roleService.findByAuthority("ROLE_"+role));
+        User user = this.mapper.map(userServiceModel,User.class);
+        this.userRepository.saveAndFlush(user);
 
+
+    }
+
+    @Override
+    public void setStatus(String id, String status) {
+        UserServiceModel userServiceModel = this.mapper.map(
+                this.userRepository.findById(id).orElseThrow(()->new UsernameNotFoundException("User not found"))
+                ,UserServiceModel.class);
+
+        userServiceModel.setStatus(UserStatus.valueOf(status));
+        User user = this.mapper.map(userServiceModel,User.class);
+        this.userRepository.saveAndFlush(user);
+    }
+
+    @Override
+    public UserServiceModel editUserProfile(UserServiceModel userServiceModel, String oldPassword) {
+        User user = this.userRepository.findByUsername(userServiceModel.getUsername())
+                .orElseThrow(()-> new UsernameNotFoundException("Username not found!"));
+
+        if (!this.bCryptPasswordEncoder.matches(oldPassword, user.getPassword())) {
+            throw new IllegalArgumentException("Incorrect password!");
+        }
+
+        user.setPassword(!"".equals(userServiceModel.getPassword()) ?
+                this.bCryptPasswordEncoder.encode(userServiceModel.getPassword()) :
+                user.getPassword());
+        user.setEmail(userServiceModel.getEmail());
+        user.setImageUrl(userServiceModel.getImageUrl());
+
+        return this.mapper.map(this.userRepository.saveAndFlush(user), UserServiceModel.class);
     }
 }

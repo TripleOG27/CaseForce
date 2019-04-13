@@ -12,8 +12,9 @@ public class Product extends BaseEntity {
     private String name;
     private String imageUrl;
     private ProductStatus availability;
-    private List<String> subcategories;
+    private List<Subcategory> subcategories;
     private List<License> licenses;
+    private List<User> clients;
 
     public Product() {
 
@@ -43,9 +44,7 @@ public class Product extends BaseEntity {
     public void setAvailability(ProductStatus availability) {
         this.availability = availability;
     }
-    @ManyToMany(targetEntity = License.class)
-    @JoinTable(name = "products_licenses",joinColumns = @JoinColumn(name = "product_id",referencedColumnName = "id")
-            ,inverseJoinColumns = @JoinColumn(name = "license_id",referencedColumnName = "id"))
+    @ManyToMany(targetEntity = License.class,cascade = CascadeType.ALL)
     public List<License> getLicenses() {
         return licenses;
     }
@@ -53,14 +52,23 @@ public class Product extends BaseEntity {
     public void setLicenses(List<License> licenses) {
         this.licenses = licenses;
     }
-    @Column(name = "subcategories")
-    @ElementCollection
-    public List<String> getSubcategories() {
+
+    @OneToMany(targetEntity = Subcategory.class,fetch = FetchType.EAGER,cascade = CascadeType.ALL)
+    @JoinColumn(name = "category_id",referencedColumnName = "id",nullable = true)
+    public List<Subcategory> getSubcategories() {
         this.subcategories = new LinkedList<>();
         return subcategories;
     }
 
-    public void setSubcategories(List<String> subcategories) {
-        this.subcategories = subcategories;
+    public void setSubcategories(List<Subcategory> subcategories) {
+        this.subcategories=subcategories;
+    }
+    @ManyToMany(targetEntity = User.class)
+    public List<User> getClients() {
+        return clients;
+    }
+
+    public void setClients(List<User> clients) {
+        this.clients = clients;
     }
 }

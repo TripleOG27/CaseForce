@@ -1,20 +1,17 @@
-package com.detelin.caseforce.domain.entities;
+package com.detelin.caseforce.domain.models.view;
 
-import javax.persistence.*;
+import com.detelin.caseforce.domain.entities.Product;
+
 import java.math.BigDecimal;
-import java.util.List;
 
-@Entity
-@Table(name = "licenses")
-public class License extends BaseEntity {
+public class LicenseAllViewModel {
     private String name;
     private BigDecimal price;
     private long period;
 
-
-    public License() {
+    public LicenseAllViewModel() {
     }
-    @Column(name = "name")
+
     public String getName() {
         return name;
     }
@@ -22,7 +19,7 @@ public class License extends BaseEntity {
     public void setName(String name) {
         this.name = name;
     }
-    @Column(name = "price")
+
     public BigDecimal getPrice() {
         return price;
     }
@@ -30,7 +27,7 @@ public class License extends BaseEntity {
     public void setPrice(BigDecimal price) {
         this.price = price;
     }
-    @Column(name = "valid_time")
+
     public long getPeriod() {
         return period;
     }
@@ -38,7 +35,4 @@ public class License extends BaseEntity {
     public void setPeriod(long period) {
         this.period = period;
     }
-
-
-
 }

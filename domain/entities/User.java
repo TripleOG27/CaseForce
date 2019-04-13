@@ -5,6 +5,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -17,6 +19,7 @@ public class User extends BaseEntity implements UserDetails {
     private UserStatus status;
     private LocalDate created;
     private Set<Role> authorities;
+    private List<PurchasedLicense> licenses;
 
     public User() {
     }
@@ -113,4 +116,14 @@ public class User extends BaseEntity implements UserDetails {
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
     }
+    @OneToMany(targetEntity = PurchasedLicense.class)
+    public List<PurchasedLicense> getLicenses() {
+        if(this.licenses==null)this.licenses=new ArrayList<>();
+        return licenses;
+    }
+
+    public void setLicenses(List<PurchasedLicense> licenses) {
+        this.licenses = licenses;
+    }
+
 }
