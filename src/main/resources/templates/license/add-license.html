@@ -18,12 +18,6 @@
             <input type="text" class="form-control text-center" id="add-product-name" name="name">
         </div>
         <div class="form-group">
-            <label for="add-product-status" class="font-weight-bold">License</label>
-            <select name="product" id="add-product-status">
-                <option th:each="product , iter : ${products}" th:value="${product}" th:text="${product}"></option>
-            </select>
-        </div>
-        <div class="form-group">
             <label for="add-product-name" class="font-weight-bold">Price</label>
             <input type="number" class="form-control text-center" id="add-license-price" name="price">
         </div>
