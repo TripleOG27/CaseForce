@@ -8,4 +8,5 @@ public interface ProductService {
     ProductServiceModel addProduct(ProductServiceModel productServiceModel);
     List<ProductServiceModel> findAll();
     List<String> findAllNames();
+    List<String> categoriesPerProduct(String name);
 }

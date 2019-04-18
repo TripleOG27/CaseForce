@@ -35,10 +35,20 @@ public class ProductServiceImpl implements ProductService{
         }
         product = this.mapper.map(productServiceModel, Product.class);
 
-        List<Subcategory> subcategoriesList= productServiceModel.getSubcategories().stream().map(c->this.mapper.map(c, Subcategory.class)).collect(Collectors.toList());
+        List<Subcategory> subcategoriesList= productServiceModel.getSubcategories().stream().map(c->{
+            Subcategory cat =  this.mapper.map(c, Subcategory.class);
+            cat.setSubcategory(c);
+//            this.subcategoryRepository.saveAndFlush(cat);
+            return cat;
+        }).collect(Collectors.toList());
         product.getSubcategories().addAll(subcategoriesList);
         product = this.productRepository.saveAndFlush(product);
-
+        subcategoriesList.forEach(c->{
+            c.setProduct(this.productRepository.findByName(productServiceModel.getName()).orElseThrow());
+            this.subcategoryRepository.saveAndFlush(c);
+        });
+        product.getSubcategories().addAll(subcategoriesList);
+        product = this.productRepository.saveAndFlush(product);
         return this.mapper.map(product, ProductServiceModel.class);
     }
 
@@ -50,5 +60,13 @@ public class ProductServiceImpl implements ProductService{
     @Override
     public List<String> findAllNames() {
         return  this.productRepository.findAll().stream().map(p->p.getName()).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<String> categoriesPerProduct(String name) {
+        return this.subcategoryRepository.findAllByProduct(this.productRepository.findByName(name).orElseThrow()).stream()
+                .map(Subcategory::getSubcategory).collect(Collectors.toList());
+
+
     }
 }

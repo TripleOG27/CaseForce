@@ -54,7 +54,6 @@ public class Product extends BaseEntity {
     }
 
     @OneToMany(targetEntity = Subcategory.class,fetch = FetchType.EAGER,cascade = CascadeType.ALL)
-    @JoinColumn(name = "category_id",referencedColumnName = "id",nullable = true)
     public List<Subcategory> getSubcategories() {
         this.subcategories = new LinkedList<>();
         return subcategories;
