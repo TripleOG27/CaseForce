@@ -18,8 +18,8 @@ public class Case {
     private List<Comment> comments;
     private User owner;
     private User customer;
-    private String category;
-    private String subcategory;
+    private Product category;
+    private Subcategory subcategory;
 
     public Case() {
     }
@@ -102,19 +102,20 @@ public class Case {
     }
     @ManyToOne(targetEntity = Product.class)
     @JoinColumn(name = "category_id",referencedColumnName = "id")
-    public String getCategory() {
+    public Product getCategory() {
         return category;
     }
 
-    public void setCategory(String category) {
+    public void setCategory(Product category) {
         this.category = category;
     }
-    @Column(name = "subcategory",nullable = false)
-    public String getSubcategory() {
+    @ManyToOne(targetEntity = Subcategory.class,fetch = FetchType.EAGER)
+    @JoinColumn(name = "subcategory_id",referencedColumnName = "id",columnDefinition = "default null")
+    public Subcategory getSubcategory() {
         return subcategory;
     }
 
-    public void setSubcategory(String subcategory) {
+    public void setSubcategory(Subcategory subcategory) {
         this.subcategory = subcategory;
     }
 }

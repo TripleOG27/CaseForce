@@ -11,7 +11,7 @@ public class CaseCreateBindingModel {
     private String subject;
     private String description;
     private List<Comment> comments;
-    private String owner;
+    private String customer;
     private String category;
     private String subcategory;
 
@@ -42,12 +42,12 @@ public class CaseCreateBindingModel {
         this.comments = comments;
     }
 
-    public String getOwner() {
-        return owner;
+    public String getCustomer() {
+        return customer;
     }
 
-    public void setOwner(String owner) {
-        this.owner = owner;
+    public void setCustomer(String customer) {
+        this.customer = customer;
     }
 
     public String getCategory() {

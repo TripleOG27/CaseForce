@@ -59,7 +59,7 @@ public class ProductController extends BaseController {
     @ResponseBody
     public List<String> getCategoriesPerProduct(@RequestBody(required = true)  String product){
         List<String> categories = this.productService.categoriesPerProduct(product);
-        int b = 5;
+//        int b = 5;
         return categories;
     }
 }

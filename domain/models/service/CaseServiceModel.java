@@ -1,6 +1,8 @@
 package com.detelin.caseforce.domain.models.service;
 
 import com.detelin.caseforce.domain.entities.Comment;
+import com.detelin.caseforce.domain.entities.Product;
+import com.detelin.caseforce.domain.entities.Subcategory;
 import com.detelin.caseforce.domain.entities.User;
 import com.detelin.caseforce.domain.entities.enums.CaseStatus;
 
@@ -17,8 +19,8 @@ public class CaseServiceModel {
     private List<Comment> comments;
     private User owner;
     private User customer;
-    private String category;
-    private String subcategory;
+    private Product category;
+    private Subcategory subcategory;
 
     public CaseServiceModel() {
     }
@@ -95,19 +97,19 @@ public class CaseServiceModel {
         this.customer = customer;
     }
 
-    public String getCategory() {
+    public Product getCategory() {
         return category;
     }
 
-    public void setCategory(String category) {
+    public void setCategory(Product category) {
         this.category = category;
     }
 
-    public String getSubcategory() {
+    public Subcategory getSubcategory() {
         return subcategory;
     }
 
-    public void setSubcategory(String subcategory) {
+    public void setSubcategory(Subcategory   subcategory) {
         this.subcategory = subcategory;
     }
 }

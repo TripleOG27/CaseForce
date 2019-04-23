@@ -1,5 +1,6 @@
 package com.detelin.caseforce.web.controller;
 
+import com.detelin.caseforce.domain.entities.enums.CaseStatus;
 import com.detelin.caseforce.domain.models.binding.CaseCreateBindingModel;
 import com.detelin.caseforce.service.CaseService;
 import com.detelin.caseforce.service.CommentService;
@@ -36,12 +37,29 @@ public class CaseController extends BaseController {
     }
     @PostMapping("/open")
     @PreAuthorize("hasRole('ROLE_CLIENT')")
-    public ModelAndView createCaseConfirm(Principal principal, @ModelAttribute CaseCreateBindingModel model,
-                                          @RequestAttribute(name = "subcategory")String subcategory,
-                                          @RequestAttribute(name = "category")String category){
-        int b=5;
-        this.caseService.createCase(principal.getName(),model);
-        return null;
+    public ModelAndView createCaseConfirm(Principal principal, @ModelAttribute CaseCreateBindingModel model){
+
+        model.setCustomer(principal.getName());
+        this.caseService.createCase(model);
+        return super.redirect("/home");
+    }
+    @GetMapping("/view/{id}")
+    public ModelAndView viewCase(@PathVariable long id,ModelAndView modelAndView){
+        modelAndView.addObject("case",this.caseService.viewCase(id));
+        return super.view("case/view",modelAndView);
+    }
+    @GetMapping("/view_open")
+    @PreAuthorize("hasAnyRole('ROLE_CLIENT','ROLE_TSE')")
+    public ModelAndView viewOpenCases(ModelAndView modelAndView, Principal principal){
+        modelAndView.addObject("cases",this.caseService.viewAllMyCasesByStatus(CaseStatus.ACTIVE.toString(),principal.getName()));
+        return super.view("case/all",modelAndView);
+
+    }
+    @GetMapping("/view_closed")
+    @PreAuthorize("hasAnyRole('ROLE_CLIENT','ROLE_TSE')")
+    public ModelAndView viewClosedCases(ModelAndView modelAndView, Principal principal){
+        modelAndView.addObject("cases",this.caseService.viewAllMyCasesByStatus(CaseStatus.CLOSED.toString(),principal.getName()));
+        return super.view("case/all",modelAndView);
 
     }
 }

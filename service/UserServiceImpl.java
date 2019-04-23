@@ -1,6 +1,7 @@
 package com.detelin.caseforce.service;
 
 import com.detelin.caseforce.GlobalConstants;
+import com.detelin.caseforce.domain.entities.Role;
 import com.detelin.caseforce.domain.entities.User;
 import com.detelin.caseforce.domain.entities.enums.UserStatus;
 import com.detelin.caseforce.domain.models.service.UserServiceModel;
@@ -111,5 +112,12 @@ public class UserServiceImpl implements UserService {
         user.setImageUrl(userServiceModel.getImageUrl());
 
         return this.mapper.map(this.userRepository.saveAndFlush(user), UserServiceModel.class);
+    }
+
+    @Override
+    public UserServiceModel findAnActiveUserToAssignACase() {
+        User user = this.userRepository.findUserByStatusEqualsAndAuthoritiesContains(UserStatus.ACTIVE,
+                this.mapper.map(this.roleService.findByAuthority(GlobalConstants.TSE_ROLE), Role.class)).orElseThrow();
+        return this.mapper.map(user, UserServiceModel.class);
     }
 }

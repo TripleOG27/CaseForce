@@ -8,5 +8,6 @@ import java.util.List;
 
 public interface SubcategoryRepository extends JpaRepository<Subcategory,String> {
     List<Subcategory> findAllByProduct(Product product);
+    Subcategory findByProductAndSubcategory(Product product,String subcategory);
 
 }

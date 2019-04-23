@@ -65,4 +65,5 @@ public class LicenseController extends BaseController {
         modelAndView.addObject("licenses",this.licenseService.showLicenses(principal.getName()));
         return super.view("license/my-licenses",modelAndView);
     }
+    
 }
